@@ -1,0 +1,108 @@
+stages:
+  prepare:
+    cmd: python src/data/make_dataset.py
+    deps:
+      - src/data/make_dataset.py
+      - data/raw/test_scores.csv
+      - params.yaml
+    outs:
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
+    params:
+      - data_preprocessing
+
+  featurize:
+    cmd: python src/features/build_features.py
+    deps:
+      - src/features/build_features.py
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
+      - params.yaml
+    outs:
+      - data/features/X_train_processed.csv
+      - data/features/X_test_processed.csv
+      - data/features/y_train_processed.csv
+      - data/features/y_test_processed.csv
+    params:
+      - feature_params
+
+  train_linear:
+    cmd: python src/models/linear_regression.py
+    deps:
+      - src/models/linear_regression.py
+      - data/features/X_train_processed.csv
+      - data/features/y_train_processed.csv
+      - params.yaml
+    outs:
+      - models/linear_regression.joblib
+    params:
+      - linear_regression
+
+  train_tree:
+    cmd: python src/models/decision_tree.py
+    deps:
+      - src/models/decision_tree.py
+      - data/features/X_train_processed.csv
+      - data/features/y_train_processed.csv
+      - params.yaml
+    outs:
+      - models/decision_tree.joblib
+    params:
+      - decision_tree
+
+  train_catboost:
+    cmd: python src/models/train_catboost.py
+    deps:
+      - src/models/train_catboost.py
+      - data/features/X_train_processed.csv
+      - data/features/y_train_processed.csv
+      - params.yaml
+    outs:
+      - models/catboost.cbm
+    params:
+      - catboost
+
+  train_xgboost:
+    cmd: python src/models/train_xgboost.py
+    deps:
+      - src/models/train_xgboost.py
+      - data/features/X_train_processed.csv
+      - data/features/y_train_processed.csv
+      - params.yaml
+    outs:
+      - models/xgboost.model
+    params:
+      - xgboost
+
+  train_mlp:
+    cmd: python src/models/mlp.py
+    deps:
+      - src/models/mlp.py
+      - data/features/X_train_processed.csv
+      - data/features/y_train_processed.csv
+      - params.yaml
+    outs:
+      - models/mlp.joblib
+    params:
+      - mlp
+
+  evaluate:
+    cmd: python src/models/predict.py
+    deps:
+      - src/models/predict.py
+      - data/features/X_test_processed.csv
+      - data/features/y_test_processed.csv
+      - models/linear_regression.joblib
+      - models/decision_tree.joblib
+      - models/catboost.cbm
+      - models/xgboost.model
+      - models/mlp.joblib
+      - params.yaml
+    outs:
+      - reports/metrics.json
+    params:
+      - evaluation

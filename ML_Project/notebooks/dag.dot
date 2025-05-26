@@ -1,0 +1,25 @@
+strict digraph {
+"..\dvc.yaml:prepare";
+"..\dvc.yaml:featurize";
+"..\dvc.yaml:train_linear";
+"..\dvc.yaml:train_tree";
+"..\dvc.yaml:train_catboost";
+"..\dvc.yaml:train_xgboost";
+"..\dvc.yaml:train_mlp";
+"..\dvc.yaml:evaluate";
+"..\data\raw\test_scores.csv.dvc";
+"..\dvc.yaml:prepare" -> "..\dvc.yaml:featurize";
+"..\dvc.yaml:featurize" -> "..\dvc.yaml:train_linear";
+"..\dvc.yaml:featurize" -> "..\dvc.yaml:train_tree";
+"..\dvc.yaml:featurize" -> "..\dvc.yaml:train_catboost";
+"..\dvc.yaml:featurize" -> "..\dvc.yaml:train_xgboost";
+"..\dvc.yaml:featurize" -> "..\dvc.yaml:train_mlp";
+"..\dvc.yaml:featurize" -> "..\dvc.yaml:evaluate";
+"..\dvc.yaml:train_linear" -> "..\dvc.yaml:evaluate";
+"..\dvc.yaml:train_tree" -> "..\dvc.yaml:evaluate";
+"..\dvc.yaml:train_catboost" -> "..\dvc.yaml:evaluate";
+"..\dvc.yaml:train_xgboost" -> "..\dvc.yaml:evaluate";
+"..\dvc.yaml:train_mlp" -> "..\dvc.yaml:evaluate";
+"..\data\raw\test_scores.csv.dvc" -> "..\dvc.yaml:prepare";
+}
+
